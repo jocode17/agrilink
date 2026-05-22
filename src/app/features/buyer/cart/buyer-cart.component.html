@@ -1,0 +1,68 @@
+<div class="buyer-layout">
+  <nav class="buyer-navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+          <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+          <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+        </svg>
+        <span>AgriLink Marketplace</span>
+      </div>
+      <div class="nav-links">
+        <a (click)="navigate('browse')">Browse</a>
+        <a (click)="navigate('orders')">Orders</a>
+        <a class="active" (click)="navigate('cart')">Cart</a>
+        <a (click)="navigate('messages')">Messages</a>
+      </div>
+    </div>
+    <div class="nav-right"><button class="btn-logout" (click)="logout()">Logout</button></div>
+  </nav>
+
+  <main class="cart-main">
+    <h1>Your Cart</h1>
+    <p *ngIf="isLoading">Loading cart...</p>
+
+    <div *ngIf="!isLoading && cartItems.length > 0" class="cart-content">
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of cartItems">
+          <div class="item-image">{{ getEmoji(item.productName) }}</div>
+          <div class="item-info">
+            <strong>{{ item.productName }}</strong>
+            <small>{{ item.farmName }} · ₱{{ item.pricePerUnit }}/{{ item.unit }}</small>
+          </div>
+          <div class="item-quantity">
+            <button (click)="updateQuantity(item, -1)">−</button>
+            <span>{{ item.quantity }}</span>
+            <button (click)="updateQuantity(item, 1)">+</button>
+          </div>
+          <div class="item-subtotal">₱{{ item.subtotal }}</div>
+          <button class="btn-remove" (click)="removeItem(item)">🗑️</button>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="summary-row"><span>Subtotal</span><strong>₱{{ cartTotal }}</strong></div>
+        <div class="summary-row"><span>Delivery Fee</span><strong>₱85</strong></div>
+        <div class="summary-row total"><span>Total</span><strong>₱{{ cartTotal + 85 }}</strong></div>
+
+        <div class="payment-select">
+          <label>Payment Method</label>
+          <div class="payment-options">
+            <button [class.active]="selectedPayment === 'gcash'" (click)="selectedPayment = 'gcash'">GCash</button>
+            <button [class.active]="selectedPayment === 'cod'" (click)="selectedPayment = 'cod'">Cash on Delivery</button>
+          </div>
+        </div>
+
+        <button class="btn-checkout" (click)="checkout()" [disabled]="isCheckingOut">
+          {{ isCheckingOut ? 'Placing Order...' : 'Place Order' }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && cartItems.length === 0" class="empty-cart">
+      <p>Your cart is empty</p>
+      <button class="btn-browse" (click)="navigate('browse')">Browse Products</button>
+    </div>
+  </main>
+</div>

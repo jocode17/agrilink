@@ -1,0 +1,177 @@
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f7f2;
+    padding: 40px 20px;
+  }
+  
+  .register-card {
+    width: 100%;
+    max-width: 520px;
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #222;
+      margin: 0 0 24px 0;
+    }
+  }
+  
+  .logo-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  
+    .logo-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2D5A27;
+    }
+  }
+  
+  // ── Role Toggle ──────────────────────────────────────────────
+  
+  .role-toggle {
+    display: flex;
+    background: #f0f0f0;
+    border-radius: 30px;
+    padding: 4px;
+    margin-bottom: 24px;
+  
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 26px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: #666;
+  
+      &.active {
+        background: white;
+        color: #2D5A27;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+  
+  // ── Form ─────────────────────────────────────────────────────
+  
+  .form-row {
+    display: flex;
+    gap: 16px;
+  
+    .form-group {
+      flex: 1;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 18px;
+  
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+  
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+      background: #fafafa;
+  
+      &:focus {
+        outline: none;
+        border-color: #4CAF50;
+        background: white;
+      }
+  
+      &::placeholder {
+        color: #bbb;
+      }
+    }
+  
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+  
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+  }
+  
+  .error-message {
+    background: #fff0f0;
+    color: #d32f2f;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    border: 1px solid #ffd0d0;
+  }
+  
+  .btn-register {
+    width: 100%;
+    padding: 14px;
+    background: #2D5A27;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+  
+    &:hover {
+      background: #3a7a32;
+    }
+  
+    &:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #888;
+  
+    a {
+      color: #2D5A27;
+      font-weight: 600;
+      text-decoration: none;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }

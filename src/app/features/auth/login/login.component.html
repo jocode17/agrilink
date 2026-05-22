@@ -1,0 +1,105 @@
+<div class="login-container">
+    <!-- Left Side - Branding -->
+    <div class="login-branding">
+      <div class="brand-content">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+              <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+              <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+            </svg>
+          </div>
+          <h1 class="brand-name">AgriLink</h1>
+        </div>
+  
+        <p class="tagline">Connecting Farmers Directly with Consumers</p>
+  
+        <div class="features">
+          <div class="feature-item">
+            <div class="feature-icon fresh">🌿</div>
+            <div>
+              <strong>Fresh Agricultural Crops</strong>
+              <p>Vegetables, fruits, and others</p>
+            </div>
+          </div>
+  
+          <div class="feature-item">
+            <div class="feature-icon direct">🤝</div>
+            <div>
+              <strong>Direct Communication</strong>
+              <p>Negotiate fair prices together</p>
+            </div>
+          </div>
+  
+          <div class="feature-item">
+            <div class="feature-icon quality">🏠</div>
+            <div>
+              <strong>For Homes & Restaurants</strong>
+              <p>Quality produce for all buyers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Right Side - Login Form -->
+    <div class="login-form-wrapper">
+      <div class="login-form-card">
+        <h2>Welcome!</h2>
+        <p class="subtitle">Sign in to your account to continue</p>
+  
+        <!-- Farmer / Buyer Toggle -->
+        <div class="role-toggle">
+          <button
+            [class.active]="activeTab === 'farmer'"
+            (click)="switchTab('farmer')">
+            Farmer
+          </button>
+          <button
+            [class.active]="activeTab === 'buyer'"
+            (click)="switchTab('buyer')">
+            Buyer
+          </button>
+        </div>
+  
+        <!-- Error Message -->
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+  
+        <!-- Form -->
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            [placeholder]="activeTab === 'farmer' ? 'farmer@example.com' : 'buyer@example.com'"
+            (keyup.enter)="onSubmit()" />
+        </div>
+  
+        <div class="form-group">
+          <div class="password-header">
+            <label>Password</label>
+            <a href="#" class="forgot-link">Forgot Password?</a>
+          </div>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            placeholder="••••••••••"
+            (keyup.enter)="onSubmit()" />
+        </div>
+  
+        <button
+          class="btn-signin"
+          (click)="onSubmit()"
+          [disabled]="isLoading">
+          {{ isLoading ? 'Signing in...' : 'Sign In' }}
+        </button>
+  
+        <p class="signup-link">
+          Don't have an account? <a routerLink="/register">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </div>

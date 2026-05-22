@@ -1,0 +1,124 @@
+<div class="farmer-layout">
+  <!-- ═══ COLLAPSIBLE SIDEBAR ═══ -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <button class="sidebar-toggle" (click)="toggleSidebar()">
+      <span [class.rotated]="sidebarCollapsed">&#9776;</span>
+    </button>
+    <div class="sidebar-top">
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+          <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+          <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand">AgriLink</span>
+          <small>Farmer Dashboard</small>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <button [class.active]="activeNav === 'overview'" (click)="navigate('overview')">
+          <span class="nav-icon">&#128202;</span><span class="nav-label">Overview</span>
+        </button>
+        <button [class.active]="activeNav === 'products'" (click)="navigate('products')">
+          <span class="nav-icon">&#127806;</span><span class="nav-label">Products</span>
+        </button>
+        <button [class.active]="activeNav === 'orders'" (click)="navigate('orders')">
+          <span class="nav-icon">&#128230;</span><span class="nav-label">Orders</span>
+        </button>
+        <button [class.active]="activeNav === 'messages'" (click)="navigate('messages')">
+          <span class="nav-icon">&#128172;</span><span class="nav-label">Messages</span>
+        </button>
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="direct-trading">
+        <strong>Direct Trading</strong>
+        <span class="nav-label">No Middlemen</span>
+      </div>
+      <div class="farmer-info">
+        <div class="avatar">{{ farmerName.charAt(0) }}</div>
+        <div class="nav-label">
+          <strong>{{ farmerName }}</strong>
+          <small>Farmer Account</small>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        &#128682; <span class="nav-label">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Orders</h1>
+      <p>Track and manage orders from buyers</p>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="tabs-bar">
+      <button *ngFor="let tab of tabs"
+              [class.tab-active]="activeTab === tab.key"
+              (click)="setTab(tab.key)">
+        {{ tab.label }}
+        <span class="tab-count">{{ getTabCount(tab.key) }}</span>
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <p>Loading orders...</p>
+    </div>
+
+    <!-- Empty -->
+    <div class="empty-state" *ngIf="!loading && filteredOrders.length === 0">
+      <p>No orders found for this filter</p>
+    </div>
+
+    <!-- Order Cards -->
+    <div class="orders-list" *ngIf="!loading && filteredOrders.length > 0">
+      <div class="order-card" *ngFor="let order of filteredOrders">
+        <div class="order-top">
+          <div class="order-id">
+            <strong>Order #{{ order.id?.substring(0, 8) }}</strong>
+            <span class="order-date">{{ order.createdAt }}</span>
+          </div>
+          <span class="status-badge"
+                [class.status-pending]="order.status === 'pending'"
+                [class.status-negotiating]="order.status === 'negotiating'"
+                [class.status-confirmed]="order.status === 'confirmed'"
+                [class.status-delivered]="order.status === 'delivered'"
+                [class.status-cancelled]="order.status === 'cancelled'">
+            {{ order.status }}
+          </span>
+        </div>
+        <div class="order-details">
+          <div class="detail-item">
+            <span class="detail-label">Buyer</span>
+            <span class="detail-value">{{ order.buyerName || 'Unknown' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Product</span>
+            <span class="detail-value">{{ order.productName || 'N/A' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Quantity</span>
+            <span class="detail-value">{{ order.quantity }} {{ order.unit || '' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Total</span>
+            <span class="detail-value total">&#8369;{{ order.totalAmount || 0 }}</span>
+          </div>
+        </div>
+        <div class="order-actions" *ngIf="order.status === 'pending'">
+          <button class="btn-confirm" (click)="updateStatus(order.id, 'confirmed')">Confirm</button>
+          <button class="btn-reject" (click)="updateStatus(order.id, 'cancelled')">Reject</button>
+        </div>
+        <div class="order-actions" *ngIf="order.status === 'confirmed'">
+          <button class="btn-deliver" (click)="updateStatus(order.id, 'delivered')">Mark Delivered</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

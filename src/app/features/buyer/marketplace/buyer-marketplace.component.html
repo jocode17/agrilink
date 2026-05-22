@@ -1,0 +1,64 @@
+<div class="buyer-layout">
+  <nav class="buyer-navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+          <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+          <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+        </svg>
+        <span>AgriLink Marketplace</span>
+      </div>
+      <div class="nav-links">
+        <a class="active" (click)="navigate('browse')">Browse</a>
+        <a (click)="navigate('orders')">Orders</a>
+        <a (click)="navigate('messages')">Messages</a>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="btn-cart" (click)="navigate('cart')">🛒</button>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="buyer-main">
+    <div class="hero-section"><h1>Fresh from Local Farms</h1><p>Browse organic produce directly from farmers in Baras, Rizal</p></div>
+
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Search vegetables, fruits or farmers..." (keyup.enter)="onSearch()" />
+    </div>
+
+    <div class="market-stats">
+      <div class="stat-box"><span class="stat-label">Active Farmers</span><span class="stat-number">{{ stats.activeFarmers }}</span></div>
+      <div class="stat-box"><span class="stat-label">Products Available</span><span class="stat-number">{{ stats.availableProducts }}</span><small>Fresh</small></div>
+    </div>
+
+    <h2 class="section-title">Available Products</h2>
+    <p *ngIf="isLoading">Loading products...</p>
+
+    <div *ngIf="!isLoading" class="products-grid">
+      <div class="product-card" *ngFor="let product of products">
+        <div class="product-image"><span class="emoji">{{ getEmoji(product.name) }}</span></div>
+        <div class="product-body">
+          <div class="product-name-row">
+            <h3>{{ product.name }}</h3>
+            <span class="category-badge">{{ product.categoryName }}</span>
+          </div>
+          <p class="farm-name">📍 {{ product.farmName }}</p>
+          <div class="product-meta">
+            <span class="rating">⭐ 4.8</span>
+            <span class="stock">{{ product.stockQuantity }} {{ product.unit }} available</span>
+          </div>
+          <div class="product-footer">
+            <span class="price">₱{{ product.pricePerUnit }}/{{ product.unit }}</span>
+            <button class="btn-add" (click)="addToCart(product)" [class.added]="cartCounts[product.id]">
+              {{ cartCounts[product.id] ? 'Added (' + cartCounts[product.id] + ')' : 'Add to Cart' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="!isLoading && products.length === 0">No products found.</p>
+  </main>
+</div>

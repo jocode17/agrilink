@@ -1,0 +1,201 @@
+<div class="farmer-layout">
+  <!-- ═══ COLLAPSIBLE SIDEBAR ═══ -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <button class="sidebar-toggle" (click)="toggleSidebar()">
+      <span [class.rotated]="sidebarCollapsed">&#9776;</span>
+    </button>
+    <div class="sidebar-top">
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+          <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+          <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand">AgriLink</span>
+          <small>Farmer Dashboard</small>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <button [class.active]="activeNav === 'overview'" (click)="navigate('overview')">
+          <span class="nav-icon">&#128202;</span><span class="nav-label">Overview</span>
+        </button>
+        <button [class.active]="activeNav === 'products'" (click)="navigate('products')">
+          <span class="nav-icon">&#127806;</span><span class="nav-label">Products</span>
+        </button>
+        <button [class.active]="activeNav === 'orders'" (click)="navigate('orders')">
+          <span class="nav-icon">&#128230;</span><span class="nav-label">Orders</span>
+        </button>
+        <button [class.active]="activeNav === 'messages'" (click)="navigate('messages')">
+          <span class="nav-icon">&#128172;</span><span class="nav-label">Messages</span>
+        </button>
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="direct-trading">
+        <strong>Direct Trading</strong>
+        <span class="nav-label">No Middlemen</span>
+      </div>
+      <div class="farmer-info">
+        <div class="avatar">{{ farmerName.charAt(0) }}</div>
+        <div class="nav-label">
+          <strong>{{ farmerName }}</strong>
+          <small>Farmer Account</small>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        &#128682; <span class="nav-label">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Welcome back, {{ farmerName }}</h1>
+      <p>Here's how your farm is doing today</p>
+    </div>
+
+    <!-- ─── Stats Cards ──────────────────────────────── -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon green">&#127793;</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalProducts }}</span>
+          <span class="stat-label">Products</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">&#128230;</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalOrders }}</span>
+          <span class="stat-label">Total Orders</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">&#9203;</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ pendingOrders }}</span>
+          <span class="stat-label">Pending</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">&#8369;</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalRevenue }}</span>
+          <span class="stat-label">Revenue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Harvest Analytics Section ────────────────── -->
+    <div class="section-title">
+      <h2>&#128200; Harvest Analytics</h2>
+    </div>
+
+    <div class="analytics-grid">
+      <!-- Supply Trends Bar Chart -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Supply Overview</h3>
+        </div>
+        <div class="supply-chart" *ngIf="supplyData.length > 0">
+          <div class="chart-bars">
+            <div class="chart-bar-wrapper" *ngFor="let s of supplyData">
+              <div class="chart-bar" [style.height.%]="getBarHeight(s.value)">
+                <span class="bar-value">{{ s.value }}</span>
+              </div>
+              <span class="bar-label">{{ s.name }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="empty-card" *ngIf="supplyData.length === 0">
+          <p>No supply data yet</p>
+        </div>
+      </div>
+
+      <!-- Crop Availability -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Crop Availability</h3>
+          <button class="btn-viewall" (click)="navigate('products')">View All</button>
+        </div>
+        <div class="availability-list" *ngIf="cropAvailability.length > 0">
+          <div class="availability-item" *ngFor="let crop of cropAvailability">
+            <div class="crop-info">
+              <strong>{{ crop.name }}</strong>
+              <span>{{ crop.stock }} {{ crop.unit }}</span>
+            </div>
+            <div class="stock-bar-bg">
+              <div class="stock-bar-fill" [class.bar-good]="getStockPercentage(crop) > 60"
+                   [class.bar-low]="getStockPercentage(crop) <= 60 && getStockPercentage(crop) > 25"
+                   [class.bar-critical]="getStockPercentage(crop) <= 25"
+                   [style.width.%]="getStockPercentage(crop)">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-card" *ngIf="cropAvailability.length === 0">
+          <p>Add products to see availability</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Recent Orders + Products ─────────────────── -->
+    <div class="dashboard-grid">
+      <!-- Recent Orders -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Recent Orders</h3>
+          <button class="btn-viewall" (click)="navigate('orders')">View All</button>
+        </div>
+        <div class="orders-list" *ngIf="recentOrders.length > 0">
+          <div class="order-row" *ngFor="let o of recentOrders">
+            <div class="order-info">
+              <strong>{{ o.buyerName || 'Buyer' }}</strong>
+              <span>{{ o.productName || 'Order' }}</span>
+            </div>
+            <div class="order-meta">
+              <span class="order-status"
+                    [class.status-pending]="o.status === 'pending'"
+                    [class.status-confirmed]="o.status === 'confirmed'"
+                    [class.status-delivered]="o.status === 'delivered'">
+                {{ o.status }}
+              </span>
+              <span class="order-amount">&#8369;{{ o.totalAmount || 0 }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="empty-card" *ngIf="recentOrders.length === 0">
+          <p>No recent orders</p>
+        </div>
+      </div>
+
+      <!-- Top Products -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Your Products</h3>
+          <button class="btn-viewall" (click)="navigate('products')">Manage</button>
+        </div>
+        <div class="products-list" *ngIf="topProducts.length > 0">
+          <div class="product-row" *ngFor="let p of topProducts">
+            <div class="product-info">
+              <strong>{{ p.name }}</strong>
+              <span>&#8369;{{ p.pricePerUnit }} / {{ p.unit }}</span>
+            </div>
+            <span class="product-stock"
+                  [class.stock-good]="p.stockQuantity > 10"
+                  [class.stock-low]="p.stockQuantity <= 10 && p.stockQuantity > 0"
+                  [class.stock-out]="p.stockQuantity <= 0">
+              {{ p.stockQuantity }} {{ p.unit }}
+            </span>
+          </div>
+        </div>
+        <div class="empty-card" *ngIf="topProducts.length === 0">
+          <p>No products yet</p>
+          <button class="btn-add-small" (click)="navigate('products')">Add Products</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

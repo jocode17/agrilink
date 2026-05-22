@@ -1,0 +1,228 @@
+@import '../../../shared/styles/sidebar';
+
+.page-header {
+  margin-bottom: 32px;
+  h1 { font-size: 30px; font-weight: 700; color: #1a1a1a; margin: 0 0 6px 0; }
+  p { font-size: 16px; color: #666; margin: 0; }
+}
+
+// ═══ STATS GRID ══════════════════════════════════════════════
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.stat-icon {
+  width: 56px; height: 56px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  &.green { background: #e8f5e9; }
+  &.blue { background: #e3f2fd; }
+  &.orange { background: #fff3e0; }
+  &.purple { background: #f3e5f5; }
+}
+
+.stat-info { display: flex; flex-direction: column; }
+.stat-value { font-size: 28px; font-weight: 700; color: #1a1a1a; }
+.stat-label { font-size: 14px; color: #888; }
+
+// ═══ SECTION TITLE ═══════════════════════════════════════════
+.section-title {
+  margin-bottom: 20px;
+  h2 { font-size: 22px; font-weight: 700; color: #1a1a1a; margin: 0; }
+}
+
+// ═══ ANALYTICS GRID ═════════════════════════════════════════
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+// ═══ SUPPLY BAR CHART ════════════════════════════════════════
+.supply-chart {
+  padding: 10px 0;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  height: 180px;
+  padding: 0 10px;
+}
+
+.chart-bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.chart-bar {
+  width: 100%;
+  max-width: 50px;
+  background: linear-gradient(180deg, #4CAF50 0%, #2D5A27 100%);
+  border-radius: 8px 8px 0 0;
+  min-height: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  transition: height 0.5s ease;
+}
+
+.bar-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+}
+
+.bar-label {
+  font-size: 11px;
+  color: #888;
+  margin-top: 8px;
+  text-align: center;
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ═══ CROP AVAILABILITY ══════════════════════════════════════
+.availability-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.availability-item {
+  .crop-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    strong { font-size: 14px; color: #333; }
+    span { font-size: 13px; color: #888; }
+  }
+}
+
+.stock-bar-bg {
+  width: 100%;
+  height: 10px;
+  background: #f0f0f0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.stock-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+  &.bar-good { background: linear-gradient(90deg, #4CAF50, #66BB6A); }
+  &.bar-low { background: linear-gradient(90deg, #FF9800, #FFB74D); }
+  &.bar-critical { background: linear-gradient(90deg, #F44336, #EF5350); }
+}
+
+// ═══ DASHBOARD GRID ══════════════════════════════════════════
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px;
+  h2, h3 { font-size: 18px; font-weight: 700; color: #1a1a1a; margin: 0; }
+}
+
+.btn-viewall {
+  padding: 8px 18px; background: #e8f5e9; color: #2D5A27;
+  border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+  &:hover { background: #c8e6c9; }
+}
+
+// ─── ORDER ROWS ──────────────────────────────────────────────
+.orders-list { display: flex; flex-direction: column; gap: 12px; }
+.order-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; background: #fafafa; border-radius: 12px;
+}
+.order-info {
+  display: flex; flex-direction: column;
+  strong { font-size: 15px; color: #333; }
+  span { font-size: 13px; color: #888; }
+}
+.order-meta { display: flex; align-items: center; gap: 14px; }
+.order-status {
+  padding: 5px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; text-transform: capitalize;
+  &.status-pending { background: #fff3e0; color: #ef6c00; }
+  &.status-confirmed { background: #e3f2fd; color: #1565c0; }
+  &.status-delivered { background: #e8f5e9; color: #2e7d32; }
+}
+.order-amount { font-size: 16px; font-weight: 700; color: #2D5A27; }
+
+// ─── PRODUCT ROWS ────────────────────────────────────────────
+.products-list { display: flex; flex-direction: column; gap: 12px; }
+.product-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; background: #fafafa; border-radius: 12px;
+}
+.product-info {
+  display: flex; flex-direction: column;
+  strong { font-size: 15px; color: #333; }
+  span { font-size: 13px; color: #888; }
+}
+.product-stock {
+  padding: 5px 12px; border-radius: 16px; font-size: 13px; font-weight: 600;
+  &.stock-good { background: #e8f5e9; color: #2e7d32; }
+  &.stock-low { background: #fff3e0; color: #ef6c00; }
+  &.stock-out { background: #ffebee; color: #c62828; }
+}
+
+.empty-card {
+  text-align: center; padding: 30px 0;
+  p { font-size: 15px; color: #999; }
+}
+
+.btn-add-small {
+  padding: 10px 22px; background: #2D5A27; color: white; border: none;
+  border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+  margin-top: 10px;
+  &:hover { background: #3a7a32; }
+}
+
+// ═══ RESPONSIVE ══════════════════════════════════════════════
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .analytics-grid, .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-value { font-size: 22px; }
+  .chart-bars { height: 140px; }
+}

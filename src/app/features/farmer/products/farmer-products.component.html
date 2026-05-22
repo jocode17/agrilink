@@ -1,0 +1,212 @@
+<div class="farmer-layout">
+  <!-- ═══ COLLAPSIBLE SIDEBAR ═══ -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <button class="sidebar-toggle" (click)="toggleSidebar()">
+      <span [class.rotated]="sidebarCollapsed">&#9776;</span>
+    </button>
+
+    <div class="sidebar-top">
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+          <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+          <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand">AgriLink</span>
+          <small>Farmer Dashboard</small>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button [class.active]="activeNav === 'overview'" (click)="navigate('overview')">
+          <span class="nav-icon">&#128202;</span>
+          <span class="nav-label">Overview</span>
+        </button>
+        <button [class.active]="activeNav === 'products'" (click)="navigate('products')">
+          <span class="nav-icon">&#127806;</span>
+          <span class="nav-label">Products</span>
+        </button>
+        <button [class.active]="activeNav === 'orders'" (click)="navigate('orders')">
+          <span class="nav-icon">&#128230;</span>
+          <span class="nav-label">Orders</span>
+        </button>
+        <button [class.active]="activeNav === 'messages'" (click)="navigate('messages')">
+          <span class="nav-icon">&#128172;</span>
+          <span class="nav-label">Messages</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="direct-trading">
+        <strong>Direct Trading</strong>
+        <span class="nav-label">No Middlemen</span>
+      </div>
+      <div class="farmer-info">
+        <div class="avatar">{{ farmerName.charAt(0) }}</div>
+        <div class="nav-label">
+          <strong>{{ farmerName }}</strong>
+          <small>Farmer Account</small>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        &#128682; <span class="nav-label">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>My Products</h1>
+        <p>Manage your farm products — add, edit, or remove listings</p>
+      </div>
+      <button class="btn-add" (click)="openAddModal()">+ Add Product</button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <p>Loading products...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && products.length === 0">
+      <p>You haven't added any products yet.</p>
+      <button class="btn-add" (click)="openAddModal()">+ Add Your First Product</button>
+    </div>
+
+    <!-- Product Cards -->
+    <div class="products-grid" *ngIf="!loading && products.length > 0">
+      <div class="product-card" *ngFor="let p of products">
+        <div class="card-image">
+          <img *ngIf="p.imageUrl" [src]="p.imageUrl" [alt]="p.name" />
+          <div class="placeholder-img" *ngIf="!p.imageUrl">&#127793;</div>
+          <span class="status-badge" [class.status-available]="p.status === 'available'"
+                [class.status-low]="p.status === 'low_stock'"
+                [class.status-out]="p.status === 'out_of_stock'">
+            {{ getStatusLabel(p.status) }}
+          </span>
+        </div>
+        <div class="card-body">
+          <h3>{{ p.name }}</h3>
+          <p class="category">{{ p.categoryName }}</p>
+          <div class="card-details">
+            <div class="detail">
+              <span class="label">Price</span>
+              <span class="value price-value">&#8369;{{ p.pricePerUnit }} / {{ p.unit }}</span>
+            </div>
+            <div class="detail">
+              <span class="label">Stock</span>
+              <span class="value">{{ p.stockQuantity }} {{ p.unit }}</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-edit" (click)="openEditModal(p)">Edit</button>
+            <button class="btn-delete" (click)="confirmDelete(p)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══ ADD/EDIT MODAL ═══ -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 *ngIf="modalMode === 'add'">Add New Product</h2>
+      <h2 *ngIf="modalMode === 'edit'">Edit Product</h2>
+      <button class="modal-close" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Product Name *</label>
+        <input type="text" [(ngModel)]="formName" placeholder="e.g. Fresh Tomatoes" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="formDescription" placeholder="Describe your product..." rows="3"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price Per Unit (PHP) *</label>
+          <input type="number" [(ngModel)]="formPricePerUnit" placeholder="0" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Unit</label>
+          <select [(ngModel)]="formUnit">
+            <option value="kg">Kilogram (kg)</option>
+            <option value="g">Gram (g)</option>
+            <option value="pc">Piece (pc)</option>
+            <option value="bundle">Bundle</option>
+            <option value="sack">Sack</option>
+            <option value="crate">Crate</option>
+            <option value="tray">Tray</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Stock Quantity *</label>
+          <input type="number" [(ngModel)]="formStock" placeholder="0" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Capacity</label>
+          <input type="number" [(ngModel)]="formCapacity" placeholder="Max capacity" min="0" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Low Stock Threshold</label>
+          <input type="number" [(ngModel)]="formLowStockThreshold" placeholder="10" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select [(ngModel)]="formCategoryId">
+            <option value="">Select category</option>
+            <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Seeding Date</label>
+          <input type="date" [(ngModel)]="formSeedingDate" />
+        </div>
+        <div class="form-group">
+          <label>Harvest Date</label>
+          <input type="date" [(ngModel)]="formHarvestDate" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="text" [(ngModel)]="formImageUrl" placeholder="https://..." />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+      <button class="btn-save" (click)="saveProduct()" [disabled]="formSaving || !formName || formPricePerUnit <= 0">
+        <span *ngIf="!formSaving">{{ modalMode === 'add' ? 'Add Product' : 'Save Changes' }}</span>
+        <span *ngIf="formSaving">Saving...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DELETE CONFIRMATION ═══ -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
+  <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Delete Product</h2>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete <strong>{{ deletingProduct?.name }}</strong>? This cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+      <button class="btn-delete-confirm" (click)="deleteProduct()">Yes, Delete</button>
+    </div>
+  </div>
+</div>

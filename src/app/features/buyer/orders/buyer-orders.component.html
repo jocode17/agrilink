@@ -1,0 +1,56 @@
+<div class="buyer-layout">
+  <nav class="buyer-navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+          <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+          <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+        </svg>
+        <span>AgriLink Marketplace</span>
+      </div>
+      <div class="nav-links">
+        <a (click)="navigate('browse')">Browse</a>
+        <a [class.active]="activeNav === 'orders'" (click)="navigate('orders')">Orders</a>
+        <a (click)="navigate('cart')">Cart</a>
+        <a (click)="navigate('messages')">Messages</a>
+      </div>
+    </div>
+    <div class="nav-right"><button class="btn-logout" (click)="logout()">Logout</button></div>
+  </nav>
+
+  <main class="orders-main">
+    <h1>My Orders</h1>
+
+    <div class="status-tabs">
+      <button *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="switchTab(tab.key)">{{ tab.label }}</button>
+    </div>
+
+    <p *ngIf="isLoading">Loading orders...</p>
+
+    <div *ngIf="!isLoading" class="orders-list">
+      <div class="order-card" *ngFor="let order of filteredOrders">
+        <div class="order-header">
+          <strong>{{ order.farmName }}</strong>
+          <span class="status-badge"
+            [class.status-pending]="order.status === 'pending'"
+            [class.status-confirmed]="order.status === 'confirmed'"
+            [class.status-delivered]="order.status === 'delivered'">
+            {{ order.status }}
+          </span>
+        </div>
+        <div class="order-details">
+          <div class="row"><span>Order #</span><span>{{ order.orderNumber }}</span></div>
+          <div class="row"><span>Payment</span><span>{{ order.paymentMethod }}</span></div>
+          <div class="row"><span>Delivery</span><span>{{ order.deliveryAddress }}</span></div>
+        </div>
+        <div class="order-total">
+          <span>Total</span>
+          <strong>&#8369;{{ order.totalAmount }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="!isLoading && filteredOrders.length === 0">No orders found.</p>
+  </main>
+</div>

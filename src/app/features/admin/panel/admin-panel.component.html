@@ -1,0 +1,103 @@
+<div class="admin-layout">
+  <nav class="admin-navbar">
+    <div class="nav-left">
+      <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+        <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+        <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+      </svg>
+      <span class="brand">AgriLink Admin</span>
+      <div class="nav-tabs">
+        <button [class.active]="activeTab === 'products'" (click)="activeTab = 'products'">Products</button>
+        <button [class.active]="activeTab === 'notifications'" (click)="activeTab = 'notifications'">Alerts ({{ notifications.length }})</button>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </nav>
+
+  <main class="admin-main">
+    <div class="stats-row">
+      <div class="stat-card"><span class="label">Products</span><span class="val">{{ stats.totalProducts }}</span></div>
+      <div class="stat-card"><span class="label">Farmers</span><span class="val">{{ stats.totalFarmers }}</span></div>
+      <div class="stat-card"><span class="label">Buyers</span><span class="val">{{ stats.totalBuyers }}</span></div>
+      <div class="stat-card"><span class="label">Orders</span><span class="val">{{ stats.totalOrders }}</span></div>
+      <div class="stat-card" *ngIf="stats.lowStockCount > 0" style="border-left: 3px solid #ef6c00;"><span class="label">Low Stock</span><span class="val" style="color:#ef6c00">{{ stats.lowStockCount }}</span></div>
+      <div class="stat-card" *ngIf="stats.outOfStockCount > 0" style="border-left: 3px solid #d32f2f;"><span class="label">Out of Stock</span><span class="val" style="color:#d32f2f">{{ stats.outOfStockCount }}</span></div>
+    </div>
+
+    <!-- Products Tab -->
+    <div *ngIf="activeTab === 'products'" class="tab-content">
+      <div class="section-header">
+        <h2>Product Management</h2>
+        <button class="btn-add" (click)="toggleAddForm()">{{ showAddForm ? 'Cancel' : '+ Add Product' }}</button>
+      </div>
+
+      <div *ngIf="showAddForm" class="add-form">
+        <div class="form-grid">
+          <div class="form-group"><label>Product Name</label><input [(ngModel)]="newProduct.name" placeholder="e.g. Tomatoes" /></div>
+          <div class="form-group"><label>Price per Unit (₱)</label><input type="number" [(ngModel)]="newProduct.pricePerUnit" /></div>
+          <div class="form-group">
+            <label>Farm</label>
+            <select [(ngModel)]="newProduct.farmId">
+              <option value="" disabled>Select farm</option>
+              <option *ngFor="let f of farmers" [value]="f.id">{{ f.farmName }} ({{ f.ownerName }})</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select [(ngModel)]="newProduct.categoryId">
+              <option value="" disabled>Select category</option>
+              <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Stock Quantity</label><input type="number" [(ngModel)]="newProduct.stockQuantity" /></div>
+          <div class="form-group"><label>Capacity</label><input type="number" [(ngModel)]="newProduct.capacity" /></div>
+        </div>
+        <div class="form-group full"><label>Description</label><textarea [(ngModel)]="newProduct.description" rows="2" placeholder="Product description..."></textarea></div>
+        <button class="btn-create" (click)="createProduct()">Create Product</button>
+      </div>
+
+      <p *ngIf="isLoading">Loading...</p>
+      <div *ngIf="!isLoading" class="products-table">
+        <table>
+          <thead><tr><th>Product</th><th>Farm</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Active</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let p of products">
+              <td><strong>{{ p.name }}</strong></td>
+              <td>{{ p.farmName }}</td>
+              <td>{{ p.categoryName }}</td>
+              <td>₱{{ p.pricePerUnit }}</td>
+              <td>{{ p.stockQuantity }} {{ p.unit }}</td>
+              <td>
+                <span class="status-dot"
+                  [class.st-available]="p.status === 'available'"
+                  [class.st-low]="p.status === 'low_stock'"
+                  [class.st-out]="p.status === 'out_of_stock'">
+                  {{ p.status }}
+                </span>
+              </td>
+              <td><button class="btn-toggle" [class.off]="!p.isActive" (click)="toggleProduct(p)">{{ p.isActive ? 'ON' : 'OFF' }}</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Notifications Tab -->
+    <div *ngIf="activeTab === 'notifications'" class="tab-content">
+      <h2>Stock Alerts</h2>
+      <p *ngIf="notifications.length === 0">All products are well stocked!</p>
+      <div class="notif-list">
+        <div class="notif-item" *ngFor="let n of notifications"
+          [class.danger]="n.status === 'out_of_stock'"
+          [class.warning]="n.status !== 'out_of_stock'">
+          <span class="notif-icon">{{ n.status === 'out_of_stock' ? '🔴' : '🟡' }}</span>
+          <div class="notif-body">
+            <strong>{{ n.type }}</strong>
+            <p>{{ n.message }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

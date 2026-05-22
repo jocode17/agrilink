@@ -1,0 +1,122 @@
+<div class="farmer-layout">
+  <!-- ═══ COLLAPSIBLE SIDEBAR ═══ -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <button class="sidebar-toggle" (click)="toggleSidebar()">
+      <span [class.rotated]="sidebarCollapsed">&#9776;</span>
+    </button>
+    <div class="sidebar-top">
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+          <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+          <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand">AgriLink</span>
+          <small>Farmer Dashboard</small>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <button [class.active]="activeNav === 'overview'" (click)="navigate('overview')">
+          <span class="nav-icon">&#128202;</span><span class="nav-label">Overview</span>
+        </button>
+        <button [class.active]="activeNav === 'products'" (click)="navigate('products')">
+          <span class="nav-icon">&#127806;</span><span class="nav-label">Products</span>
+        </button>
+        <button [class.active]="activeNav === 'orders'" (click)="navigate('orders')">
+          <span class="nav-icon">&#128230;</span><span class="nav-label">Orders</span>
+        </button>
+        <button [class.active]="activeNav === 'messages'" (click)="navigate('messages')">
+          <span class="nav-icon">&#128172;</span><span class="nav-label">Messages</span>
+        </button>
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="direct-trading">
+        <strong>Direct Trading</strong>
+        <span class="nav-label">No Middlemen</span>
+      </div>
+      <div class="farmer-info">
+        <div class="avatar">{{ farmerName.charAt(0) }}</div>
+        <div class="nav-label">
+          <strong>{{ farmerName }}</strong>
+          <small>Farmer Account</small>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        &#128682; <span class="nav-label">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MESSAGES PANEL ═══ -->
+  <main class="messages-panel">
+    <!-- Conversations List -->
+    <div class="conversations-pane">
+      <div class="pane-header">
+        <h2>Messages</h2>
+      </div>
+
+      <div class="conv-loading" *ngIf="loadingConversations">Loading conversations...</div>
+
+      <div class="conv-empty" *ngIf="!loadingConversations && conversations.length === 0">
+        <p>No conversations yet</p>
+        <small>Messages from buyers will appear here</small>
+      </div>
+
+      <div class="conv-list" *ngIf="!loadingConversations && conversations.length > 0">
+        <div class="conv-item" *ngFor="let conv of conversations"
+             [class.conv-selected]="selectedConversation?.id === conv.id"
+             (click)="selectConversation(conv)">
+          <div class="conv-avatar">{{ getContactInitial(conv) }}</div>
+          <div class="conv-info">
+            <div class="conv-name-row">
+              <strong>{{ getContactName(conv) }}</strong>
+              <span class="conv-badge" *ngIf="conv.unreadCount > 0">{{ conv.unreadCount }}</span>
+            </div>
+            <p class="conv-preview">{{ conv.lastMessage || conv.lastMessageContent || '' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-pane">
+      <!-- No selection -->
+      <div class="chat-empty" *ngIf="!selectedConversation">
+        <p>Select a conversation to start messaging</p>
+      </div>
+
+      <!-- Chat header -->
+      <div class="chat-header" *ngIf="selectedConversation">
+        <div class="chat-contact-avatar">{{ getContactInitial(selectedConversation) }}</div>
+        <div class="chat-contact-info">
+          <strong>{{ getContactName(selectedConversation) }}</strong>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages" *ngIf="selectedConversation">
+        <div class="msg-loading" *ngIf="loadingMessages">Loading messages...</div>
+        <div class="msg-bubble" *ngFor="let msg of messages"
+             [class.msg-mine]="msg.isMine"
+             [class.msg-theirs]="!msg.isMine">>
+          <div class="bubble-content">
+            <p>{{ msg.content }}</p>
+            <span class="msg-time">{{ msg.createdAt }}</span>
+          </div>
+        </div>
+        <div #messagesEnd></div>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input" *ngIf="selectedConversation">
+        <input type="text"
+               [(ngModel)]="newMessage"
+               (keydown)="handleKeyPress($event)"
+               placeholder="Type a message..." />
+        <button class="btn-send" (click)="sendMessage()">Send</button>
+      </div>
+    </div>
+  </main>
+</div>

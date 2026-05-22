@@ -1,0 +1,106 @@
+<div class="buyer-layout">
+  <!-- ═══ BUYER TOP NAV ═══ -->
+  <header class="buyer-nav">
+    <div class="nav-left">
+      <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="8" fill="#2D5A27"/>
+        <path d="M20 8C16 8 12 12 12 18C12 24 16 28 20 32C24 28 28 24 28 18C28 12 24 8 20 8Z" fill="#4CAF50"/>
+        <path d="M20 14C18 14 16 16 16 18C16 20 18 22 20 24C22 22 24 20 24 18C24 16 22 14 20 14Z" fill="white"/>
+      </svg>
+      <span class="brand">AgriLink</span>
+    </div>
+    <nav class="nav-links">
+      <button [class.active]="activeNav === 'marketplace'" (click)="navigateBuyer('marketplace')">Marketplace</button>
+      <button [class.active]="activeNav === 'cart'" (click)="navigateBuyer('cart')">Cart</button>
+      <button [class.active]="activeNav === 'orders'" (click)="navigateBuyer('orders')">My Orders</button>
+      <button [class.active]="activeNav === 'messages'" (click)="navigateBuyer('messages')">Messages</button>
+    </nav>
+    <div class="nav-right">
+      <span class="user-name">{{ buyerName }}</span>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- ═══ MESSAGES AREA ═══ -->
+  <div class="messages-container">
+    <!-- Conversations List -->
+    <div class="conversations-pane">
+      <div class="pane-header">
+        <h2>Messages</h2>
+        <button class="btn-new-chat" (click)="openNewChat()">+ New</button>
+      </div>
+
+      <!-- New Chat: Select a farmer -->
+      <div class="new-chat-list" *ngIf="showNewChat">
+        <p class="new-chat-title">Select a farmer to message:</p>
+        <div class="farmer-item" *ngFor="let f of farmers" (click)="startChatWithFarmer(f)">
+          <div class="conv-avatar">{{ (f.name || f.farmName || 'F').charAt(0) }}</div>
+          <div class="farmer-item-info">
+            <strong>{{ f.name || f.ownerName || 'Farmer' }}</strong>
+            <small>{{ f.farmName || f.address || '' }}</small>
+          </div>
+        </div>
+        <div class="conv-empty" *ngIf="farmers.length === 0">
+          <p>No farmers available</p>
+        </div>
+      </div>
+
+      <div class="conv-loading" *ngIf="loadingConversations && !showNewChat">Loading conversations...</div>
+
+      <div class="conv-empty" *ngIf="!loadingConversations && conversations.length === 0 && !showNewChat">
+        <p>No conversations yet</p>
+        <small>Message a farmer to get started</small>
+      </div>
+
+      <div class="conv-list" *ngIf="!showNewChat && !loadingConversations && conversations.length > 0">
+        <div class="conv-item" *ngFor="let conv of conversations"
+             [class.conv-selected]="selectedConversation?.id === conv.id"
+             (click)="selectConversation(conv)">
+          <div class="conv-avatar">{{ getContactInitial(conv) }}</div>
+          <div class="conv-info">
+            <div class="conv-name-row">
+              <strong>{{ getContactName(conv) }}</strong>
+              <span class="conv-badge" *ngIf="conv.unreadCount > 0">{{ conv.unreadCount }}</span>
+            </div>
+            <p class="conv-preview">{{ conv.lastMessage || conv.lastMessageContent || '' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-pane">
+      <div class="chat-empty" *ngIf="!selectedConversation">
+        <p>Select a conversation or start a new one</p>
+      </div>
+
+      <div class="chat-header" *ngIf="selectedConversation">
+        <div class="chat-contact-avatar">{{ getContactInitial(selectedConversation) }}</div>
+        <div class="chat-contact-info">
+          <strong>{{ getContactName(selectedConversation) }}</strong>
+        </div>
+      </div>
+
+      <div class="chat-messages" *ngIf="selectedConversation">
+        <div class="msg-loading" *ngIf="loadingMessages">Loading messages...</div>
+        <div class="msg-bubble" *ngFor="let msg of messages"
+             [class.msg-mine]="msg.isMine"
+             [class.msg-theirs]="!msg.isMine">>
+          <div class="bubble-content">
+            <p>{{ msg.content }}</p>
+            <span class="msg-time">{{ msg.createdAt }}</span>
+          </div>
+        </div>
+        <div #messagesEnd></div>
+      </div>
+
+      <div class="chat-input" *ngIf="selectedConversation">
+        <input type="text"
+               [(ngModel)]="newMessage"
+               (keydown)="handleKeyPress($event)"
+               placeholder="Type a message..." />
+        <button class="btn-send" (click)="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
